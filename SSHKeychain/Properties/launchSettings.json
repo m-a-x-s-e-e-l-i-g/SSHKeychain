@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "SSHKeychain (Package)": {
+      "commandName": "MsixPackage",
+      "doNotLaunchApp": true
+    },
+    "SSHKeychain (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
