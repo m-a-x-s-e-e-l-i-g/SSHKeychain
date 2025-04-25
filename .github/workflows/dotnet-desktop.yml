@@ -93,10 +93,10 @@ jobs:
     #   env:
     #     Configuration: ${{ matrix.configuration }}
 
-    # Upload build artifacts - corrected path to match the actual build output
+    # Upload build artifacts - fixing the path to match the actual build output
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.configuration }}-Build
-        path: SSHKeychain/SSHKeychain/bin/${{ matrix.configuration }}
+        path: SSHKeychain/bin/${{ matrix.configuration }}
         if-no-files-found: warn
