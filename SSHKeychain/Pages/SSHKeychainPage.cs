@@ -134,16 +134,28 @@ internal partial class LaunchSshCommand : Microsoft.CommandPalette.Extensions.To
 
         try
         {
-            // Launch Windows Terminal with the SSH command
+            // Try to launch Windows Terminal first
+            bool windowsTerminalAvailable = IsCommandAvailable("wt.exe");
+            
             var processStartInfo = new ProcessStartInfo
             {
-                FileName = "wt.exe",
-                Arguments = sshCommand,
                 UseShellExecute = true,
                 CreateNoWindow = false
             };
+            
+            if (windowsTerminalAvailable)
+            {
+                // Use Windows Terminal if available
+                processStartInfo.FileName = "wt.exe";
+                processStartInfo.Arguments = sshCommand;
+            }
+            else
+            {
+                // Fall back to cmd.exe if Windows Terminal is not available
+                processStartInfo.FileName = "cmd.exe";
+                processStartInfo.Arguments = $"/k {sshCommand}";
+            }
 
-            Debug.WriteLine($"Starting terminal with command: {sshCommand}");
             Process.Start(processStartInfo);
             
             // Return success and hide the palette
@@ -154,6 +166,37 @@ internal partial class LaunchSshCommand : Microsoft.CommandPalette.Extensions.To
             Debug.WriteLine($"Failed to start terminal: {ex.Message}");
             // Show an error message to the user
             return CommandResult.ShowToast($"Failed to start SSH session: {ex.Message}");
+        }
+    }
+    
+    // Check if a command is available in the PATH
+    private bool IsCommandAvailable(string command)
+    {
+        try
+        {
+            using var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "where.exe",
+                    Arguments = command,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                }
+            };
+            
+            process.Start();
+            string output = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+            
+            // If where.exe finds the command, it will return a non-empty path
+            return !string.IsNullOrWhiteSpace(output);
+        }
+        catch
+        {
+            // If there's any error, assume the command is not available
+            return false;
         }
     }
 }
