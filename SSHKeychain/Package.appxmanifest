@@ -19,6 +19,7 @@
     <DisplayName>SSH Keychain</DisplayName>
     <PublisherDisplayName>Max Seelig</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
+    <Tags>windows-commandpalette-extension</Tags>
   </Properties>
 
   <Dependencies>
