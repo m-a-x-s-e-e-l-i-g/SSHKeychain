@@ -100,7 +100,7 @@ internal partial class LaunchSshCommand : Microsoft.CommandPalette.Extensions.To
     public LaunchSshCommand(string hostName, string user, string port, string identityFile)
     {
         Name = $"SSH to {hostName}"; // A short name for the command
-        Icon = new("$");
+        Icon = new("\uE756"); // CommandPrompt from Segoe
         _hostName = hostName;
         _user = user;
         _port = port;
@@ -113,43 +113,47 @@ internal partial class LaunchSshCommand : Microsoft.CommandPalette.Extensions.To
     private readonly string _identityFile;
 
     // Open an SSH session in the terminal
-    public ICommandResult Invoke()
+    public override CommandResult Invoke()
     {
-        var arguments = $"ssh {_hostName}";
+        var sshCommand = $"ssh {_hostName}";
 
         if (!string.IsNullOrEmpty(_user))
         {
-            arguments += $" -l {_user}";
+            sshCommand += $" -l {_user}";
         }
 
         if (!string.IsNullOrEmpty(_port))
         {
-            arguments += $" -p {_port}";
+            sshCommand += $" -p {_port}";
         }
 
         if (!string.IsNullOrEmpty(_identityFile))
         {
-            arguments += $" -i \"{_identityFile}\"";
+            sshCommand += $" -i \"{_identityFile}\"";
         }
-
-        var processStartInfo = new ProcessStartInfo
-        {
-            FileName = "wt.exe", // Windows Terminal
-            Arguments = $"-p \"Command Prompt\" {arguments}",
-            UseShellExecute = true
-        };
 
         try
         {
-            Debug.WriteLine($"Start terminal");
+            // Launch Windows Terminal with the SSH command
+            var processStartInfo = new ProcessStartInfo
+            {
+                FileName = "wt.exe",
+                Arguments = sshCommand,
+                UseShellExecute = true,
+                CreateNoWindow = false
+            };
+
+            Debug.WriteLine($"Starting terminal with command: {sshCommand}");
             Process.Start(processStartInfo);
+            
+            // Return success and hide the palette
+            return CommandResult.Dismiss();
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"Failed to start terminal: {ex.Message}");
+            // Show an error message to the user
+            return CommandResult.ShowToast($"Failed to start SSH session: {ex.Message}");
         }
-
-        // Hides the Command Palette window, without changing the page that's open
-        return CommandResult.Hide();
     }
 }
