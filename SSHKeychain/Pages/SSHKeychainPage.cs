@@ -95,7 +95,7 @@ internal sealed partial class SSHKeychainPage : ListPage
     }
 }
 
-internal partial class LaunchSshCommand : Microsoft.CommandPalette.Extensions.Toolkit.InvokableCommand
+internal sealed partial class LaunchSshCommand : Microsoft.CommandPalette.Extensions.Toolkit.InvokableCommand
 {
     public LaunchSshCommand(string hostName, string user, string port, string identityFile)
     {
@@ -170,7 +170,7 @@ internal partial class LaunchSshCommand : Microsoft.CommandPalette.Extensions.To
     }
     
     // Check if a command is available in the PATH
-    private bool IsCommandAvailable(string command)
+    private static bool IsCommandAvailable(string command)
     {
         try
         {
