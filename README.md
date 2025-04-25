@@ -44,7 +44,7 @@ Host myserver
 2. Open the solution in Visual Studio 2022 or later
 3. Build the solution
 4. Deploy the package to your local machine for testing
-5. Reload Extension in Windows Command Palette by typing "Reload Extension" in the Command Palette
+5. Reload Extension in Windows Command Palette by typing "Reload" in the Command Palette
 
 ## Contributing
 
